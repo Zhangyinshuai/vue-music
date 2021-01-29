@@ -4,6 +4,13 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import fastclick from "fastclick";
+import VueLazyLoad from "vue-lazyload";
+
+Vue.use(VueLazyLoad, {
+  error: require("common/image/default.png"),
+  loading: require("common/image/loading.gif") 
+});
+
 // CSS
 import "common/stylus/index.styl";
 

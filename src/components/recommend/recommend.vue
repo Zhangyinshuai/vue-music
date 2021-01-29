@@ -1,12 +1,12 @@
 <template>
   <div class="recommend">
-    <Scroll :data="discList" class="recommend-content">
+    <Scroll :data="discList" class="recommend-content" ref="scroll">
       <div>
         <div class="slider-wrapper">
           <Slider>
             <div v-for="item in recommends" :key="item.id">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl" alt="">
+                <img :src="item.picUrl" alt="" />
               </a>
             </div>
           </Slider>
@@ -16,7 +16,13 @@
           <ul>
             <li v-for="item in discList" :key="item.dissid" class="item">
               <div class="icon">
-                <img width="60" height="60" :src="item.imgurl" alt="">
+                <img
+                  width="60"
+                  height="60"
+                  v-lazy="item.imgurl"
+                  @load="loadImage"
+                  alt=""
+                />
               </div>
               <div class="text">
                 <h2 class="name">{{ item.creator.name }}</h2>
@@ -26,6 +32,9 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!discList.length">
+        <Loading title="载入ing"></Loading>
+      </div>
     </Scroll>
   </div>
 </template>
@@ -33,8 +42,9 @@
 <script>
 import { getRecommend, getDiscList } from "src/api/recommend";
 import { ERR_OK } from "src/api/config";
-import Slider from "base/slider/slider"; 
+import Slider from "base/slider/slider";
 import Scroll from "base/scroll/scroll";
+import Loading from "base/loading/loading";
 export default {
   name: "Recommend",
   data() {
@@ -101,11 +111,19 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    loadImage() {
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh();
+        this.checkLoaded = true;
+        console.log("图片加载完成了");
+      }
     }
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 };
 </script>
